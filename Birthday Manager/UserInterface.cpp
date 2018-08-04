@@ -107,6 +107,7 @@ void BirthdayManagerMenu::PrintGreeting() {
 	std::cout << "Hello User, this is the Birthday Manager program.\n\n";
 	std::cout << "In this program, you can view and edit existing birthdays.\n";
 	std::cout << "In addition, you can store new birthdays.\n\n";
+
 }
 
 int BirthdayManagerMenu::SelectOption() {
