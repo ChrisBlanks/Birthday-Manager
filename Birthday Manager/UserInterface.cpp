@@ -8,7 +8,45 @@ BirthdayManagerMenu::BirthdayManagerMenu() {}
 void BirthdayManagerMenu::StartUp(){
 	
 	PrintGreeting();
-	while (!ExitCondition) { SelectEvent( SelectOption() ); }
+	while (!ExitCondition) { 
+		CreateInitialData(); //Will check after each action the user enacts
+		SelectEvent( SelectOption() );
+	}
+}
+
+bool BirthdayManagerMenu::CheckForExistingData() {
+	
+	std::ifstream f("Birthdays_Storage.txt");
+	return f.good(); //returns true if no errors 
+}
+
+void BirthdayManagerMenu::CreateInitialData() {
+	
+	HasDataFile = CheckForExistingData();
+	if (HasDataFile) { return; }
+	else {
+		std::cout << "\n It seems like you do not have a \"Birthdays_Storage.txt\" file." ;
+		std::cout << "\n You will have to create one before continuing.\n\n";
+		
+		std::string f_name, l_name;
+		int month, day, year;
+
+		std::cout << "Enter the first and last name of the person of interest.\n";
+		std::cin >> f_name >> l_name;
+
+		std::cout << "Enter the birthday month.\n";
+		std::cin >> month;
+		std::cout << "Enter the birthday day.\n";
+		std::cin >> day;
+		std::cout << "Enter the birthday year.\n";
+		std::cin >> year;
+
+		BirthdayEntry entry(f_name, l_name, month, day, year);
+		entry.StoreEntry();
+
+		HasDataFile = true;
+		std::cout << "\n\n";
+	}
 }
 
 void BirthdayManagerMenu::SelectEvent(int user_selection) {
@@ -81,6 +119,14 @@ void BirthdayManagerMenu::SelectEvent(int user_selection) {
 
 		BirthdayEntry entry;
 		entry.DeleteEntry(f_name, l_name);
+
+		std::ifstream f("Birthdays_Storage.txt");
+
+		if (isEmpty(f)) {
+			f.close();
+			std::remove("Birthdays_Storage.txt");
+		}
+		
 		break;
 	}
 	case 6:
@@ -124,3 +170,4 @@ int BirthdayManagerMenu::SelectOption() {
 	std::cin >> choice;
 	return choice;
 }
+

@@ -31,6 +31,7 @@ void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_
 	
 	std::string f_name, l_name, name_change;
 	int choice, month, day, year;
+	bool InData = false;
 
 	std::ofstream overwrite_file("temp_name.txt"); //used to rewrite the old file contents with the new change
 	std::ifstream file_store;
@@ -43,10 +44,11 @@ void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_
 	}
 
 	while (file_store >> f_name >> l_name >> month >> day >> year) {
-
+		
 		if (f_name == desired_f_name && l_name == desired_l_name) {
-			std::cout << "Here's the current birthday entry:\n" << f_name << " " << l_name<< " " << month << "/" << day << "/" << year;
-			std::cout << "\nEnter one of the following numbers that corresponds to what you want to change.";
+			InData = true;
+			std::cout << "\nHere's the current birthday entry:\n" << f_name << " " << l_name<< " " << month << "/" << day << "/" << year;
+			std::cout << "\n\nEnter one of the following numbers that corresponds to what you want to change.";
 			std::cout << "\nOptions:\n1. day \n2. month \n3. year \n4. first name \n5. last name\n\n>>";
 
 			while (!(std::cin >> choice)) {
@@ -86,7 +88,7 @@ void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_
 		
 		overwrite_file << f_name << " " << l_name << " " << month << " " << day << " " << year << std::endl; //transfers changes to new file
 	}
-	
+	if (!InData) { std::cout << "No contacts with that name.\n" ; }
 	overwrite_file.close();
 	file_store.close();
 
@@ -99,15 +101,17 @@ void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_
 void BirthdayEntry::ViewSingleEntry(std::string desired_f_name, std::string desired_l_name) {
 	std::string f_name, l_name;
 	int month, day, year;
-
+	bool InData = false;
 	std::ifstream file_store(birthday_file);
 	while (file_store >> f_name >> l_name >> month >> day >> year) {
 		if (f_name == desired_f_name && l_name == desired_l_name) {
+			InData = true;
 			std::cout << std::endl << f_name << " " << l_name <<" " << month << "/" << day << "/" << year << "\n\n";
 			break;
 		}
 	
 	}
+	if (!InData) { std::cout << "No contacts with that name.\n"; }
 }
 
 
@@ -128,6 +132,7 @@ void BirthdayEntry::ViewBirthdayList() {
 void BirthdayEntry::DeleteEntry(std::string desired_f_name, std::string desired_l_name) {
 	std::string f_name, l_name;
 	int month, day, year;
+	bool InData = false;
 
 	std::ofstream overwrite_file("temp_name.txt"); //used to rewrite the old file contents with the new change
 
@@ -136,13 +141,16 @@ void BirthdayEntry::DeleteEntry(std::string desired_f_name, std::string desired_
 
 	while (file_store >> f_name >> l_name >> month >> day >> year) {
 		if (f_name == desired_f_name && l_name == desired_l_name) {
-			std::cout << "Found " << desired_f_name << " " << desired_l_name << ".\n Entry is now removed." ;
+			InData = true;
+			std::cout << "Found " << desired_f_name << " " << desired_l_name << ".\n Entry is now removed.\n" ;
 		}
 		else {
 			overwrite_file << f_name << " " << l_name << " " << month  << " " << day << " " << year <<std::endl;
 		}
 	}
 	
+	if (!InData) { std::cout << "No contacts with that name.\n"; }
+
 	overwrite_file.close();
 	file_store.close();
 
