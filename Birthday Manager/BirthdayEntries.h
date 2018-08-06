@@ -16,10 +16,12 @@ public:
 	void EditEntry(std::string desired_f_name,std::string desired_l_name);
 	void DeleteAllBirthdayEntries();
 
+
 private:
 	int bday_month, bday_day, bday_year;
 	std::string first_name, last_name;
 	const std::string birthday_file = "Birthdays_Storage.txt";
+	bool InData = false; 
 
 	void SortEntries();
 };

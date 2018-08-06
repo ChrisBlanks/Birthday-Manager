@@ -85,6 +85,12 @@ void BirthdayManagerMenu::SelectEvent(int user_selection) {
 
 		BirthdayEntry entry(f_name,l_name,month,day,year);
 		entry.StoreEntry();
+
+		std::ifstream f("Birthdays_Storage.txt");
+		if (isEmpty(f)) {
+			f.close();
+			std::remove("Birthdays_Storage.txt");
+		}
 		break;
 	}
 

@@ -23,14 +23,14 @@ void BirthdayEntry::StoreEntry() {
 		<< this->bday_day << " " << this->bday_year << std::endl;
 	file_store.close();
 
-	//SortEntries(); //sorts entries because there's no guarantee that everything will be alphabetical order
+	SortEntries();
 }
 
 void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_name) {
 	
 	std::string f_name, l_name, name_change;
 	int choice, month, day, year;
-	bool InData = false;
+	
 
 	std::ofstream overwrite_file("temp_name.txt"); //used to rewrite the old file contents with the new change
 	std::ifstream file_store;
@@ -87,20 +87,20 @@ void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_
 		
 		overwrite_file << f_name << " " << l_name << " " << month << " " << day << " " << year << std::endl; //transfers changes to new file
 	}
-	if (!InData) { std::cout << "No contacts with that name.\n" ; }
+	if (!InData) { std::cout << "No contacts with that name.\n\n" ; }
 	overwrite_file.close();
 	file_store.close();
 
 	std::remove(birthday_file.c_str());
 	if (std::rename("temp_name.txt", birthday_file.c_str()) == 1) { std::cout << "Error in renaming file."; }; //renames overwrite file to original birthday file name
-	//SortEntries(); //sorts entries because there's no guarantee that everything will be alphabetical order
+	SortEntries(); //sorts entries because there's no guarantee that everything will be alphabetical order
 }
 
 
 void BirthdayEntry::ViewSingleEntry(std::string desired_f_name, std::string desired_l_name) {
 	std::string f_name, l_name;
 	int month, day, year;
-	bool InData = false;
+	
 	std::ifstream file_store(birthday_file);
 	while (file_store >> f_name >> l_name >> month >> day >> year) {
 		if (f_name == desired_f_name && l_name == desired_l_name) {
@@ -110,7 +110,7 @@ void BirthdayEntry::ViewSingleEntry(std::string desired_f_name, std::string desi
 		}
 	
 	}
-	if (!InData) { std::cout << "No contacts with that name.\n"; }
+	if (!InData) { std::cout << "No contacts with that name.\n\n"; }
 }
 
 
@@ -131,7 +131,7 @@ void BirthdayEntry::ViewBirthdayList() {
 void BirthdayEntry::DeleteEntry(std::string desired_f_name, std::string desired_l_name) {
 	std::string f_name, l_name;
 	int month, day, year;
-	bool InData = false;
+	
 
 	std::ofstream overwrite_file("temp_name.txt"); //used to rewrite the old file contents with the new change
 
@@ -148,7 +148,7 @@ void BirthdayEntry::DeleteEntry(std::string desired_f_name, std::string desired_
 		}
 	}
 	
-	if (!InData) { std::cout << "No contacts with that name.\n"; }
+	if (!InData) { std::cout << "No contacts with that name.\n\n"; }
 
 	overwrite_file.close();
 	file_store.close();
@@ -158,12 +158,10 @@ void BirthdayEntry::DeleteEntry(std::string desired_f_name, std::string desired_
 }
 
 
-//Not working
 void BirthdayEntry::SortEntries() {
 
 	std::string f_name, l_name, line,search_first, search_second;
 	int month, day, year;
-	int count = 0;
 
 	std::vector<std::pair<std::string, std::string>> names;
 	std::pair<std::string, std::string> name;
@@ -179,23 +177,28 @@ void BirthdayEntry::SortEntries() {
 	}
 
 	std::sort(names.begin(),names.end());
-	
+
+	file_store.clear();
+	file_store.seekg(0, std::ios::beg); //resets the stream to point at the beginning of the file again
+
 	for (itr = names.begin(); itr != names.end();itr++) {
-		search_first = names.at(count).first;
-		search_second = names.at(count).second;
+		search_first = itr->first;
+		search_second = itr->second;
 
 		while (getline(file_store, line)) {
 			if (line.find(search_first) != std::string::npos && line.find(search_first) != std::string::npos) {
-				overwrite_file << line;
+				overwrite_file << line<< std::endl;
 			}
 		}
-		count++;
+		file_store.clear();
+		file_store.seekg(0, std::ios::beg);
 	}
+	
+	overwrite_file.close();
+	file_store.close();
 	
 	std::remove(birthday_file.c_str());
 	std::rename("temp_name.txt", birthday_file.c_str());
-	file_store.close();
-	overwrite_file.close();
 }
 
 void BirthdayEntry::DeleteAllBirthdayEntries() {
