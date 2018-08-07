@@ -153,7 +153,7 @@ void BirthdayEntry::DeleteEntry(std::string desired_f_name, std::string desired_
 	file_store.close();
 
 	std::remove(birthday_file.c_str());
-	if (std::rename("temp_name.txt", birthday_file.c_str()) == 1) { std::cout << "Error in renaming file."; }; //renames overwrite file to original birthday file name
+	std::rename("temp_name.txt", birthday_file.c_str());
 }
 
 
