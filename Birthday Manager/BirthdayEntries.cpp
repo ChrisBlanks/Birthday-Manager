@@ -90,7 +90,7 @@ void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_
 	file_store.close();
 
 	std::remove(birthday_file.c_str());
-	if (std::rename("temp_name.txt", birthday_file.c_str()) == 1) { std::cout << "Error in renaming file."; }; //renames overwrite file to original birthday file name
+	std::rename("temp_name.txt", birthday_file.c_str()); //renames overwrite file to original birthday file name
 	SortEntries(); //sorts entries because there's no guarantee that everything will be alphabetical order
 	RemoveDuplicates();
 }
@@ -123,7 +123,6 @@ void BirthdayEntry::ViewBirthdayList() {
 	while (birthday_list >> f_name >> l_name >> month >> day >> year) {
 		std::cout << f_name << " " << l_name << " " << month << "/" << day << "/" << year << "\n\n";
 	}
-
 	birthday_list.close();
 }
 
@@ -131,9 +130,7 @@ void BirthdayEntry::DeleteEntry(std::string desired_f_name, std::string desired_
 	std::string f_name, l_name;
 	int month, day, year;
 	
-
 	std::ofstream overwrite_file("temp_name.txt"); //used to rewrite the old file contents with the new change
-
 	std::ifstream file_store;
 	file_store.open(birthday_file);
 
@@ -142,9 +139,7 @@ void BirthdayEntry::DeleteEntry(std::string desired_f_name, std::string desired_
 			InData = true;
 			std::cout << "Found " << desired_f_name << " " << desired_l_name << ".\n Entry is now removed.\n" ;
 		}
-		else {
-			overwrite_file << f_name << " " << l_name << " " << month  << " " << day << " " << year <<std::endl;
-		}
+		else { overwrite_file << f_name << " " << l_name << " " << month  << " " << day << " " << year <<std::endl;}
 	}
 	
 	if (!InData) { std::cout << "No contacts with that name.\n\n"; }
@@ -203,24 +198,19 @@ void BirthdayEntry::SortEntries() {
 
 void BirthdayEntry::RemoveDuplicates() {
 
-	std::string f_name, l_name,temp1,temp2;
+	std::string f_name, l_name,temp1;
 	int month, day, year;
 
-	std::set<std::pair<std::string,std::string>> name_set;
-
+	std::set<std::string> name_set;
 	std::ifstream original(birthday_file);
 	std::ofstream new_file("temp.txt");
 
-	while (original >> f_name >> l_name >> month >> day >> year ) {
-		temp1 = " " + std::to_string(month) + " " + std::to_string(day) + " " + std::to_string(year) + "\n" ;
-		temp2 = f_name + " " + l_name;
-		std::pair<std::string, std::string> temp3 { temp2,temp1 };
-		name_set.insert(temp3) ;
+	//Set data structure gets rid of duplicates
+	while (original >> f_name >> l_name >> month >> day >> year) {
+		name_set.insert(f_name + " " + l_name + " " + std::to_string(month) + " " + std::to_string(day) + " " + std::to_string(year) + "\n");
 	}
 
-	for (auto const &str : name_set) {
-		new_file << str.first << str.second;
-	}
+	for (auto const &str : name_set) { new_file << str; }
 
 	original.close();
 	new_file.close();

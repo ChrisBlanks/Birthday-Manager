@@ -72,7 +72,6 @@ void BirthdayManagerMenu::SelectEvent(int user_selection) {
 		std::string f_name, l_name;
 		int month, day, year;
 
-
 		std::cout << "Enter the first and last name of the person of interest.\n";
 		std::cin >> f_name >> l_name;
 
