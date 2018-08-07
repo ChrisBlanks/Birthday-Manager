@@ -24,6 +24,7 @@ private:
 	bool InData = false; 
 
 	void SortEntries();
+	void RemoveDuplicates();
 };
 
 #endif

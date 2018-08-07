@@ -13,8 +13,6 @@ BirthdayEntry::BirthdayEntry(std::string f_name, std::string l_name, int month, 
 		first_name(f_name),last_name(l_name) , bday_month(month), bday_day(day), bday_year(year){}
 
 
-
-
 void BirthdayEntry::StoreEntry() {
 
 	std::ofstream file_store;
@@ -24,6 +22,7 @@ void BirthdayEntry::StoreEntry() {
 	file_store.close();
 
 	SortEntries();
+	RemoveDuplicates();
 }
 
 void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_name) {
@@ -31,7 +30,6 @@ void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_
 	std::string f_name, l_name, name_change;
 	int choice, month, day, year;
 	
-
 	std::ofstream overwrite_file("temp_name.txt"); //used to rewrite the old file contents with the new change
 	std::ifstream file_store;
 
@@ -94,6 +92,7 @@ void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_
 	std::remove(birthday_file.c_str());
 	if (std::rename("temp_name.txt", birthday_file.c_str()) == 1) { std::cout << "Error in renaming file."; }; //renames overwrite file to original birthday file name
 	SortEntries(); //sorts entries because there's no guarantee that everything will be alphabetical order
+	RemoveDuplicates();
 }
 
 
@@ -200,6 +199,35 @@ void BirthdayEntry::SortEntries() {
 	std::remove(birthday_file.c_str());
 	std::rename("temp_name.txt", birthday_file.c_str());
 }
+
+
+void BirthdayEntry::RemoveDuplicates() {
+
+	std::string f_name, l_name,temp1,temp2;
+	int month, day, year;
+
+	std::set<std::pair<std::string,std::string>> name_set;
+
+	std::ifstream original(birthday_file);
+	std::ofstream new_file("temp.txt");
+
+	while (original >> f_name >> l_name >> month >> day >> year ) {
+		temp1 = " " + std::to_string(month) + " " + std::to_string(day) + " " + std::to_string(year) + "\n" ;
+		temp2 = f_name + " " + l_name;
+		std::pair<std::string, std::string> temp3 { temp2,temp1 };
+		name_set.insert(temp3) ;
+	}
+
+	for (auto const &str : name_set) {
+		new_file << str.first << str.second;
+	}
+
+	original.close();
+	new_file.close();
+	std::remove(birthday_file.c_str());
+	std::rename("temp.txt", birthday_file.c_str());
+}
+
 
 void BirthdayEntry::DeleteAllBirthdayEntries() {
 	std::remove(birthday_file.c_str());
