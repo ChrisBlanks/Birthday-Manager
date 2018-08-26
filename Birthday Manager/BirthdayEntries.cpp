@@ -63,6 +63,11 @@ void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_
 			case 2:
 				std::cout << "Please, enter the new month.\n>>";
 				std::cin >> month;
+					
+				while (month > 12) {
+					std::cout << "Hey, your month is invalid";
+					std::cin >> month;
+				}
 				break;
 
 			case 3:
