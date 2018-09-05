@@ -2,8 +2,61 @@
 #include "BirthdayEntries.h"
 #include "stdafx.h"
 
-BirthdayManagerMenu::BirthdayManagerMenu() {}
 
+void checkForValidDay(int &day, int month, int year) {
+	int max_day = 0; // adjusted for each month
+	if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+		max_day = 31;
+	}
+	else if (month == 2) {
+		max_day = 28; //common year
+					  //leap year case
+		if ((year % 4) == 0) {
+			max_day = 29; //adds the leap day
+			if ((year % 100 == 0) && (year % 400) != 0) { max_day = 28; }
+		}
+	}
+	else { max_day = 30; }
+
+	while (day > max_day || day < 1) {
+		std::cout << "Hey, your day is invalid. Try again!\n>>";
+		std::cin >> day;
+	}
+}
+
+void checkForValidMonth(int &month) {
+	while (month > 12 || month < 1) {
+		std::cout << "Hey, your month is invalid. Try again!\n>>";
+		std::cin >> month;
+	}
+}
+
+void checkForValidYear(int &year, int month, int day) {
+	std::chrono::system_clock Clock;
+	auto now = Clock.now(); //gets current point in time
+	std::time_t tt = std::chrono::system_clock::to_time_t(now); //conversion to C time datatype
+	std::tm local_s = *localtime(&tt); //converts into a local time
+									   //uses the current year as the max  and 1900 as the min (anybody born before 1900 is probably dead)
+	while (year > (local_s.tm_year + 1900) || year < 1900) {
+		std::cout << "Hey, your year is invalid. Try again!\n>>";
+		std::cin >> year;
+	}
+
+	//checking to see if change in year is valid due to some years being leap years
+	if (month == 2 && day == 29) {
+		if (year % 4) {
+			if ((year % 100 == 0) && (year % 400) != 0) {
+				while (year > (local_s.tm_year + 1900) || year < 1900) {
+					std::cout << "The year that you entered isn't a leap year,";
+					std::cout << " which goes against having a birthday on the 29th of february. Try again!\n>>";
+					std::cin >> year;
+				}
+			}
+		}
+	}
+}
+
+BirthdayManagerMenu::BirthdayManagerMenu() {}
 
 void BirthdayManagerMenu::StartUp(){
 	
@@ -40,6 +93,10 @@ void BirthdayManagerMenu::CreateInitialData() {
 		std::cin >> day;
 		std::cout << "Enter the birthday year.\n";
 		std::cin >> year;
+
+		checkForValidMonth(month);
+		checkForValidYear(year,month,day);
+		checkForValidDay(day,month,year);
 
 		BirthdayEntry entry(f_name, l_name, month, day, year);
 		entry.StoreEntry();
@@ -81,6 +138,10 @@ void BirthdayManagerMenu::SelectEvent(int user_selection) {
 		std::cin >> day;
 		std::cout << "Enter the birthday year.\n";
 		std::cin >> year;
+
+		checkForValidMonth(month);
+		checkForValidYear(year, month, day);
+		checkForValidDay(day, month, year);
 
 		BirthdayEntry entry(f_name,l_name,month,day,year);
 		entry.StoreEntry();
@@ -136,13 +197,13 @@ void BirthdayManagerMenu::SelectEvent(int user_selection) {
 	}
 	case 6:
 	{
-		int isSure;
-		std::cout << "Are you sure that you want to delete all of the birthday entries? Enter 1 if you are.\n>>" ;
-		std::cin >> isSure;
-		if (std::cin.fail() or !std::cin) { abort(); }
+		char isSure = 'n'; //default value
+		std::cout << "Are you sure that you want to delete all of the birthday entries? Enter \'y\' if you are.\n>>" ;
+		while (std::cin >> isSure) {}
 
 		BirthdayEntry entry;
-		if (isSure == 1) { entry.DeleteAllBirthdayEntries(); }
+		if (isSure == 'y' || isSure == 'Y') { entry.DeleteAllBirthdayEntries(); }
+		else { std::cout << "Okay. The information has not been deleted.\n"; }
 		break;
 	}
 	case 7:

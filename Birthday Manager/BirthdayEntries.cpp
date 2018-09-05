@@ -56,25 +56,72 @@ void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_
 
 			switch (choice) {
 			case 1:
+			{
 				std::cout << "Please, enter the new day.\n>>";
 				std::cin >> day;
-				break;
 
+				int max_day = 0; // adjusted for each month
+				if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+					max_day = 31;
+				}
+				else if (month == 2) {
+					max_day = 28; //common year
+					//leap year case
+					if ((year % 4) == 0) {
+						max_day = 29; //adds the leap day
+						if ((year % 100 == 0) && (year % 400) != 0) { max_day = 28; }
+					}
+				}
+				else { max_day = 30; }
+
+				while (day > max_day || day < 1) {
+					std::cout << "Hey, your day is invalid. Try again!\n>>";
+					std::cin >> day;
+				}
+
+				break;
+			}
 			case 2:
 				std::cout << "Please, enter the new month.\n>>";
 				std::cin >> month;
 					
-				while (month > 12) {
-					std::cout << "Hey, your month is invalid";
+				while (month > 12 || month < 1) {
+					std::cout << "Hey, your month is invalid. Try again!\n>>";
 					std::cin >> month;
 				}
 				break;
 
 			case 3:
+			{
 				std::cout << "Please, enter the new year.\n>>";
 				std::cin >> year;
-				break;
 
+				std::chrono::system_clock Clock;
+				auto now = Clock.now(); //gets current point in time
+				std::time_t tt = std::chrono::system_clock::to_time_t(now); //conversion to C time datatype
+				std::tm local_tm = *localtime(&tt); //converts into a local time
+
+				//uses the current year as the max  and 1900 as the min (anybody born before 1900 is probably dead)
+				while (year > (local_tm.tm_year+1900) || year < 1900) {
+					std::cout << "Hey, your year is invalid. Try again!\n>>";
+					std::cin >> year;
+				}
+
+				//checking to see if change in year is valid due to some years being leap years
+				if (month == 2 && day == 29) {
+					if (year % 4) {
+						if ((year % 100 == 0) && (year % 400) != 0) {
+							while (year > (local_tm.tm_year + 1900) || year < 1900) {
+								std::cout << "The year that you entered isn't a leap year,";
+								std::cout << " which goes against having a birthday on the 29th of february. Try again!\n>>";
+								std::cin >> year;
+							}
+						}
+					}
+				}
+
+				break;
+			}
 			case 4:
 				std::cout << "Please, enter the new first name.\n>>";
 				std::cin >> f_name;
