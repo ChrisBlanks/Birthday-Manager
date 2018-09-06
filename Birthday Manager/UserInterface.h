@@ -18,6 +18,9 @@ private:
 	bool HasDataFile;
 };
 
+void checkForValidDay(int &day, int month, int year);
+void checkForValidMonth(int &month);
+void checkForValidYear(int &year, int month, int day);
 
 
 #endif
