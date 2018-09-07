@@ -25,9 +25,12 @@ void BirthdayEntry::StoreEntry() {
 	RemoveDuplicates();
 }
 
-void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_name) {
+void BirthdayEntry::EditEntry(std::string target_f_name, std::string target_l_name) {
 	
-	std::string f_name, l_name, name_change;
+	std::string f_name = "", l_name = "";
+	std::string temp1, temp2, name_change;
+	std::string delimiter = " ";
+
 	int choice, month, day, year;
 	
 	std::ofstream overwrite_file("temp_name.txt"); //used to rewrite the old file contents with the new change
@@ -42,48 +45,79 @@ void BirthdayEntry::EditEntry(std::string desired_f_name, std::string desired_l_
 
 	while (file_store >> f_name >> l_name >> month >> day >> year) {
 		
-		if (f_name == desired_f_name && l_name == desired_l_name) {
+		if (f_name == target_f_name && l_name == target_l_name) {
 			InData = true;
 			std::cout << "\nHere's the current birthday entry:\n" << f_name << " " << l_name<< " " << month << "/" << day << "/" << year;
 			std::cout << "\n\nEnter one of the following numbers that corresponds to what you want to change.";
 			std::cout << "\nOptions:\n1. day \n2. month \n3. year \n4. first name \n5. last name\n\n>>";
 
-			while (!(std::cin >> choice)) {
-				std::cout << "\n Not a valid choice. Try again\n>>";
-				std::cin.clear();
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			while (1) {
+				std::getline(std::cin, temp2);
+				std::stringstream input_stream(temp2);
+				if (input_stream >> choice) { break; }
+				else { std::cout << "Invalid choice. Try again.\n>>"; }
 			}
 
 			switch (choice) {
 			case 1:
 			{
 				std::cout << "Please, enter the new day.\n>>";
-				std::cin >> day;
+				while (1) {
+					std::string input = "";
+					std::getline(std::cin, input);
+					std::stringstream input_stream(input);
+					if (input_stream >> day) { break; }
+					else { std::cout << "Invalid input. Try again.\n>>"; }
+				}
 				checkForValidDay(day, month, year);
 				break;
 			}
 			case 2:
 				std::cout << "Please, enter the new month.\n>>";
-				std::cin >> month;
+				while (1) {
+					std::string input = "";
+					std::getline(std::cin, input);
+					std::stringstream input_stream(input);
+					if (input_stream >> month) { break; }
+					else { std::cout << "Invalid input. Try again.\n>>"; }
+				}
 				checkForValidMonth(month);
 				break;
 
 			case 3:
 			{
 				std::cout << "Please, enter the new year.\n>>";
-				std::cin >> year;
+				while (1) {
+					std::string input = "";
+					std::getline(std::cin, input);
+					std::stringstream input_stream(input);
+					if (input_stream >> year) { break; }
+					else { std::cout << "Invalid input. Try again.\n>>"; }
+				}
 				checkForValidYear(year, month, day);
 				break;
 			}
 			case 4:
 				std::cout << "Please, enter the new first name.\n>>";
-				std::cin >> f_name;
+				while (1) {
+					std::getline(std::cin, temp1);
+					f_name = temp1.substr(0, temp1.find(delimiter));
+					if ( !(f_name.empty()) ) { break; }
+					else { std::cout << "Invalid input. Try again.\n>>"; }
+				}
 				break;
 
 			case 5:
 				std::cout << "Please, enter the new last name.\n>>";
-				std::cin >> l_name;
+				while (1) {
+					std::getline(std::cin, temp1);
+					l_name = temp1.substr(0, temp1.find(delimiter));
+					if (!(l_name.empty())) { break; }
+					else { std::cout << "Invalid input. Try again.\n>>"; }
+				}
 				break;
+			default:
+				std::cout << "No option was selected, so going back to main menu.\n";
 			}
 			
 		}
